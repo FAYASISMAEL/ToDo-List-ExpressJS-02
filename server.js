@@ -6,17 +6,17 @@ const app = express();
 const port = 3000;
 
 app.use(express.static("public"));
-app.use(express.json());
+app.use(express.json({limit:"100mb"}));
 
 // add task
 app.post("/addtask",async(req,res) => {
     console.log(req.body);
     
     try{
-        const {task} = req.body;
+        const {task,image} = req.body;
         if(!task)
             return res.status(404).send({error:"task is required"});
-        const data = await todoSchema.create({task});
+        const data = await todoSchema.create({task,image});
         res.status(201).send(data);
     }
     catch(err){
@@ -48,6 +48,7 @@ connection()
 })
 
 
+// update //
 
 app.post("/update/:id", async (req, res) => {
     try {
@@ -76,6 +77,22 @@ app.get('/delete/:id',async(req,res)=>{
         res.status(500).send({error: err})
     }
 })
+
+
+
+
+// multiple image adding
+
+// app.post('public', ('images',3),(req,res) => {
+//     console.log(req.file);
+//     res.join({message:'Files uploaded successfully',file: req.file})
+    
+// })
+
+
+
+
+
 
 // import express from "express";
 // import path from 'path';

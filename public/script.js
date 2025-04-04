@@ -1,4 +1,8 @@
 // 
+let image = ""
+
+
+
 async function getdata() {
     
     const res = await fetch("http://localhost:3000/tasks");
@@ -11,7 +15,7 @@ async function getdata() {
     data.forEach(e => {
         str+=`
         <div class="list">
-            <div class="task"><input type="checkbox" ${e.task?"checked":""}/><span>${e.task}</span></div>
+            <div class="task"><input type="checkbox" ${e.task?"checked":""}/><span>${e.task}</span><img class="imgban" src = ${e.image} width: "100px"></div>
 
             <div class="btn">
                 <button class="button" onclick="updatefn('${e._id}', '${e.task}')">Edit</button>
@@ -59,10 +63,11 @@ async function addTask(task){
         const res = await fetch('http://localhost:3000/addtask',{
             method:"POST",
             headers:{'Content-Type':"application/json"},
-            body:JSON.stringify({task})
+            body:JSON.stringify({task,image})
         })
         const data = await res.json()
         if(res.status==201){
+            document.getElementById("img").innerHTML=""
             getdata()
             document.getElementById("task").value=""
             alert("Task Added")
@@ -109,8 +114,54 @@ async function deleteTask(id) {
   }
 
 
+// image adding
+
+document.getElementById("file").addEventListener("change",async (e) => {
+    console.log(e.target.files[0]);
+    image = await convertBase64(e.target.files[0]);
+    console.log(image);
+    document.getElementById("img").innerHTML=`<img src=${image} alt="no image">`;
+})
+
+function convertBase64(file){
+
+    console.log("inside base64");
+    return new Promise((resolve,reject) => {
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(file);
+
+        fileReader.onload = () => {
+            resolve(fileReader.result);
+        }
+        fileReader.onerror = (error) => {
+            reject(error);
+        }
+    })
+}
+    
 
 
+// multiple images
+
+// document.getElementById('form').addEventListener('submit', function(event) {
+//     eventnfusd.preventDefault();
+
+//     const formData = new FormData(this);
+
+//     fetch('public', {
+//         method:"POST",
+//         body: formData
+//     })
+
+//     .then(response => response.json())
+//     .then(data => {
+//         console.log(data);
+//         alert('Task added successfully');
+//     })
+//     .catch(error => {
+//         console.error('Error:',error);
+//     });
+// });
 
 
 
